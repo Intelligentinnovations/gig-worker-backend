@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "dev": "nx serve api",
     "generate-app": "bash scripts/new-app.sh",
     "build": "nx run-many --t build",
     "build:dependencies": "bash scripts/create-dependency-output.sh",

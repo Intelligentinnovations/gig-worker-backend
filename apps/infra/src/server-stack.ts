@@ -14,7 +14,7 @@ export class ServerStack extends cdk.Stack {
     super(scope, id, props);
 
     const appFunction = new lambda.Function(this, 'AppFunction', {
-      code: lambda.Code.fromAsset('dist/apps/nest-template'),
+      code: lambda.Code.fromAsset('dist/apps/api'),
       runtime: lambda.Runtime.NODEJS_18_X,
       handler: 'main.handler',
       layers: [props.dependencyLayer],

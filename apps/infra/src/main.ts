@@ -12,7 +12,7 @@ import { ChatStack } from './chat-stack';
 // import { FileManagerStack } from './file-manager-stack';
 import { NotificationStack } from './notification-stack';
 import { getSecrets, secrets } from './secrets';
-// import { ServerStack } from './server-stack';
+import { ServerStack } from './server-stack';
 
 getSecrets().then(() => {
   const appName = `${secrets.APP_NAME}-${secrets.ENV}`;
@@ -46,11 +46,11 @@ getSecrets().then(() => {
     dependencyLayer: base.dependencyLayer,
   });
 
-  // const server = new ServerStack(app, 'app', {
-  //   stackName: `${appName}-app`,
-  //   env,
-  //   dependencyLayer: base.dependencyLayer,
-  // });
+  const server = new ServerStack(app, 'app', {
+    stackName: `${appName}-app`,
+    env,
+    dependencyLayer: base.dependencyLayer,
+  });
 
   // const file = new FileManagerStack(app, 'filemanager', {
   //   stackName: `${appName}-file`,
@@ -62,7 +62,7 @@ getSecrets().then(() => {
     stackName: `${appName}-api`,
     env,
     apps: {
-      // server: { baseRoute: 'v1', function: server.appFunction },
+      server: { baseRoute: 'v1', function: server.appFunction },
       // file: { baseRoute: 'file', function: file.fileFunction },
       auth: { baseRoute: 'auth', function: auth.authFunction },
       chat: { baseRoute: 'chat', function: chat.chatFunction },
