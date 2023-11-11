@@ -33,7 +33,7 @@ export class RecruiterService {
 
     // todo emit created profile to auth service
 
-    const recruiter = await this.recruiterRepo
+    await this.recruiterRepo
       .create({
         userId: user.id,
         companyName: data.companyName,
