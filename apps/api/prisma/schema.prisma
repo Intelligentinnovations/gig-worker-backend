@@ -9,15 +9,138 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           BigInt   @id @default(autoincrement())
+  email        String   @unique
+  firstName    String
+  lastName     String
+  profileImage String?
+  roles        String[]
+
+  recruiter Recruiter?
+  talent    Talent?
+}
+
 model Recruiter {
-  id             BigInt   @id @default(autoincrement())
-  email          String   @unique
-  firstName      String
-  lastName       String
+  id             BigInt @id @default(autoincrement())
   companyName    String
   companyAddress String
-  website        String
-  profileImage   String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @default(now())
+  companySize    Int
+  companyType    String
+  companyWebsite String
+  userId         BigInt @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Talent {
+  id                BigInt   @id @default(autoincrement())
+  bio               String
+  location          String
+  yearsOfExperience Int
+  skills            String[]
+  timezone          String
+  userId            BigInt   @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  experience   TalentWorkExperience[]
+  preference   TalentJobPreference[]
+  education    TalentEducationBackground[]
+  certificates TalentCertificate[]
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model TalentWorkExperience {
+  id          BigInt    @id @default(autoincrement())
+  companyName String
+  jobTitle    String
+  startDate   DateTime
+  endDate     DateTime?
+  description String
+  skills      String[]
+  jobType     JobType
+  talentId    BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  talent Talent @relation(fields: [talentId], references: [id])
+}
+
+model TalentJobPreference {
+  id              BigInt            @id @default(autoincrement())
+  experienceLevel ExperienceLevel[]
+  workMode        WorkMode[]
+  jobType         JobType[]
+  location        String
+  expectedSalary  BigInt
+  talentId        BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  talent Talent @relation(fields: [talentId], references: [id])
+}
+
+model TalentEducationBackground {
+  id              BigInt          @id @default(autoincrement())
+  institutionName String
+  courseOfStudy   String
+  entryDate       DateTime
+  graduationDate  DateTime?
+  degree          EducationDegree
+  talentId        BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  talent Talent @relation(fields: [talentId], references: [id])
+}
+
+model TalentCertificate {
+  id              BigInt   @id @default(autoincrement())
+  title           String
+  institutionName String
+  validationUrl   String
+  issueDate       DateTime
+  talentId        BigInt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+
+  talent Talent @relation(fields: [talentId], references: [id])
+}
+
+enum EducationDegree {
+  A_LEVEL
+  O_LEVEL
+  BACHELORS
+  MASTERS
+  PHD
+}
+
+enum WorkMode {
+  REMOTE
+  ON_SITE
+  HYBRID
+}
+
+enum JobType {
+  FULL_TIME
+  CONTRACT
+  PART_TIME
+}
+
+enum ExperienceLevel {
+  INTERN
+  ENTRY
+  MID
+  SENIOR
+  EXECUTIVE
 }
