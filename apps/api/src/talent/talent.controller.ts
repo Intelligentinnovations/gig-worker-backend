@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CustomRes } from '@backend-template/http';
 import {
   Authenticated,
@@ -11,11 +19,11 @@ import { TalentProfileDto } from './talent-profile.dto';
 
 @Controller('talent')
 @UseGuards(AuthenticatedGuard)
+@ApiBearerAuth('access-token')
 export class TalentController {
   constructor(private talentService: TalentService) {}
 
   @Post()
-  @ApiBearerAuth('access-token')
   async addRecruiter(
     @Authenticated() user: UserData,
     @Body() data: TalentProfileDto
@@ -25,11 +33,11 @@ export class TalentController {
 
   @Get()
   async getProfile(@Authenticated() user: UserData) {
+    Logger.log(user);
     return CustomRes.success(await this.talentService.fetchTalent(user.email));
   }
 
   @Put()
-  @ApiBearerAuth('access-token')
   async updateRecruiter(
     @Body() data: TalentProfileDto,
     @Authenticated() user: UserData

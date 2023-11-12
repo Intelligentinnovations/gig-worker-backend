@@ -28,14 +28,16 @@ export class TalentService {
       roles: ['recruiter'],
     });
 
-    this.talentRepo.create({
-      bio: data.bio,
-      location: data.location,
-      yearsOfExperience: data.yearsOfExperience,
-      skills: data.skills,
-      timezone: data.timezone,
-      userId: userId,
-    });
+    await this.talentRepo
+      .create({
+        bio: data.bio,
+        location: data.location,
+        yearsOfExperience: data.yearsOfExperience,
+        skills: data.skills,
+        timezone: data.timezone,
+        userId: userId,
+      })
+      .elseThrow();
 
     return this.talentRepo.findByEmail(authenticated.email).elseThrow();
   }
@@ -55,11 +57,11 @@ export class TalentService {
     await this.talentRepo
       .update({
         id: talentProfile.id,
-        bio: talentProfile.bio,
-        location: talentProfile.location,
-        yearsOfExperience: talentProfile.yearsOfExperience,
-        skills: talentProfile.skills,
-        timezone: talentProfile.timezone,
+        bio: data.bio,
+        location: data.location,
+        yearsOfExperience: data.yearsOfExperience,
+        skills: data.skills,
+        timezone: data.timezone,
       })
       .elseThrow();
 
@@ -70,6 +72,7 @@ export class TalentService {
     const talentProfile = await this.talentRepo.findByEmail(email).elseThrow();
 
     return {
+      ...talentProfile,
       certificates: await this.certificateRepo
         .findAllByTalent(talentProfile.id)
         .elseReturn([]),

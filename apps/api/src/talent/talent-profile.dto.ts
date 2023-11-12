@@ -24,17 +24,22 @@ export class TalentProfileDto {
   profileImage!: string | null;
 
   @IsAlphanumeric()
+  @ApiProperty()
   bio!: string;
 
   @IsAlphanumeric()
+  @ApiProperty()
   location!: string;
 
   @IsInt()
+  @ApiProperty()
   yearsOfExperience!: number;
 
   @IsArray()
   @IsString({ each: true })
+  @ApiProperty()
   skills!: Array<string>;
 
+  @ApiProperty()
   timezone!: string;
 }
