@@ -4,6 +4,7 @@ import { UserRepo } from '../user/user.repo';
 import { UserData } from '@backend-template/types';
 import { RecruiterProfileData } from './recruiter.schema';
 import { CustomRes } from '@backend-template/http';
+import { RecruiterProfileDto } from './recruiter-profile.dto';
 
 @Injectable()
 export class RecruiterService {
@@ -12,7 +13,7 @@ export class RecruiterService {
     private userRepo: UserRepo
   ) {}
 
-  async create(authenticated: UserData, data: RecruiterProfileData) {
+  async create(authenticated: UserData, data: RecruiterProfileDto) {
     const existingUser = await this.userRepo
       .findByEmail(authenticated.email)
       .elseNull();
@@ -48,7 +49,7 @@ export class RecruiterService {
     return this.recruiterRepo.findByEmail(authenticated.email).elseThrow();
   }
 
-  async update(authenticated: UserData, data: RecruiterProfileData) {
+  async update(authenticated: UserData, data: RecruiterProfileDto) {
     let recruiterProfile = await this.recruiterRepo
       .findByEmail(authenticated.email)
       .elseThrow();
@@ -58,7 +59,7 @@ export class RecruiterService {
         id: recruiterProfile.userId,
         firstName: data.firstName,
         lastName: data.lastName,
-        profileImage: data.profileImage,
+        profileImage: data.profileImage ?? null,
       })
       .elseThrow();
 
