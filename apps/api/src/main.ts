@@ -9,20 +9,24 @@ import { APIGatewayProxyEvent, Handler, SNSEvent, SQSEvent } from 'aws-lambda';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 
 import { AppModule } from './app/app.module';
+import { SwaggerModule } from '@nestjs/swagger';
+import { baseRoute, docsConfig } from './config';
 
 const serverSubject = new ReplaySubject<CallbackHandler>();
-httpBootstrap(AppModule, 'v1').then((transporter) => {
+
+httpBootstrap(AppModule, baseRoute).then((app) => {
+  const document = SwaggerModule.createDocument(app, docsConfig);
+  SwaggerModule.setup(`${baseRoute}/docs`, app, document);
+
   serverSubject.next(
-    awsLambdaFastify(transporter.getHttpAdapter().getInstance(), {
+    awsLambdaFastify(app.getHttpAdapter().getInstance(), {
       callbackWaitsForEmptyEventLoop: false,
     })
   );
 });
 
 const microserviceSubject = new ReplaySubject<AwsTransporter>();
-awsBootstrap(AppModule).then((transporter) =>
-  microserviceSubject.next(transporter)
-);
+awsBootstrap(AppModule).then((app) => microserviceSubject.next(app));
 
 export const handler: Handler = async (
   event: APIGatewayProxyEvent | SQSEvent | SNSEvent,
