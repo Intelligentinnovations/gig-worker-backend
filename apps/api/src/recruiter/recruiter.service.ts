@@ -1,42 +1,28 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { RecruiterRepo } from './recruiter.repo';
-import { UserRepo } from '../user/user.repo';
 import { UserData } from '@backend-template/types';
-import { RecruiterProfileData } from './recruiter.schema';
-import { CustomRes } from '@backend-template/http';
 import { RecruiterProfileDto } from './recruiter-profile.dto';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class RecruiterService {
   constructor(
     private recruiterRepo: RecruiterRepo,
-    private userRepo: UserRepo
+    private userService: UserService
   ) {}
 
   async create(authenticated: UserData, data: RecruiterProfileDto) {
-    const existingUser = await this.userRepo
-      .findByEmail(authenticated.email)
-      .elseNull();
-
-    if (existingUser) {
-      throw CustomRes.badRequest('account with email already exist');
-    }
-
-    const user = await this.userRepo
-      .create({
-        email: authenticated.email,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        profileImage: data.profileImage,
-        roles: ['recruiter'],
-      })
-      .elseThrow();
-
-    // todo emit created profile to auth service
+    const userId = await this.userService.create({
+      email: authenticated.email,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      profileImage: data.profileImage,
+      roles: ['recruiter'],
+    });
 
     await this.recruiterRepo
       .create({
-        userId: user.id,
+        userId: userId,
         companyName: data.companyName,
         companyAddress: data.companyAddress,
         companySize: data.companySize,
@@ -45,7 +31,6 @@ export class RecruiterService {
       })
       .elseThrow();
 
-    Logger.log(authenticated);
     return this.recruiterRepo.findByEmail(authenticated.email).elseThrow();
   }
 
@@ -54,16 +39,12 @@ export class RecruiterService {
       .findByEmail(authenticated.email)
       .elseThrow();
 
-    await this.userRepo
-      .update({
-        id: recruiterProfile.userId,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        profileImage: data.profileImage ?? null,
-      })
-      .elseThrow();
-
-    // todo emit profile update event
+    await this.userService.update({
+      id: recruiterProfile.userId,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      profileImage: data.profileImage ?? null,
+    });
 
     await this.recruiterRepo
       .update({
