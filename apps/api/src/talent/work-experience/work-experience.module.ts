@@ -1,8 +1,12 @@
 import { Module } from '@nestjs/common';
+
+import { WorkExperienceController } from './work-experience.controller';
 import { WorkExperienceRepo } from './work-experience.repo';
+import { WorkExperienceService } from './work-experience.service';
 
 @Module({
-  providers: [WorkExperienceRepo],
+  controllers: [WorkExperienceController],
+  providers: [WorkExperienceRepo, WorkExperienceService],
   exports: [WorkExperienceRepo],
 })
 export class WorkExperienceModule {}

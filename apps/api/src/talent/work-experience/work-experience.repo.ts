@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
-import { Insertable, Selectable } from 'kysely';
-import { DB, TalentWorkExperience } from '../../utils/types';
 import { KyselyService } from '@backend-template/database';
 import { Optional } from '@backend-template/helpers';
+import { Injectable } from '@nestjs/common';
+import { Insertable, Selectable } from 'kysely';
+import { DateTime } from 'luxon';
+
+import { DB, TalentWorkExperience } from '../../utils/types';
+import { TalentRepo } from '../talent.repo';
 
 @Injectable()
 export class WorkExperienceRepo {
@@ -18,19 +21,24 @@ export class WorkExperienceRepo {
     );
   }
 
-  update(data: Selectable<TalentWorkExperience>) {
+  update(
+    data: Omit<
+      Selectable<TalentWorkExperience>,
+      'createdAt' | 'updatedAt' | 'talentId'
+    >
+  ) {
     return this.client
       .updateTable('TalentWorkExperience')
-      .set(data)
+      .set({ ...data, updatedAt: DateTime.now().toJSDate() })
       .where('id', '=', data.id)
-      .execute();
+      .executeTakeFirst();
   }
 
   delete(id: string) {
     return this.client
       .deleteFrom('TalentWorkExperience')
       .where('id', '=', id)
-      .execute();
+      .executeTakeFirst();
   }
 
   findAllByTalent(talentId: string) {
@@ -43,14 +51,36 @@ export class WorkExperienceRepo {
     );
   }
 
-  findByIdAndTalent(id: string, talentId: string) {
+  updateByIdAndTalent(
+    data: Omit<Selectable<TalentWorkExperience>, 'createdAt' | 'updatedAt'>
+  ) {
     return Optional.of(
       this.client
-        .selectFrom('TalentWorkExperience')
-        .where('id', '=', id)
-        .where('talentId', '=', talentId)
-        .selectAll()
+        .updateTable('TalentWorkExperience')
+        .set({ ...data, updatedAt: DateTime.now().toJSDate() })
+        .where('id', '=', data.id)
+        .where('talentId', '=', data.talentId)
+        .returning([
+          'id',
+          'startDate',
+          'endDate',
+          'companyName',
+          'jobTitle',
+          'jobType',
+          'description',
+          'skills',
+          'createdAt',
+          'updatedAt',
+        ])
         .executeTakeFirst()
     );
+  }
+
+  async deleteByIdAndTalent(id: string, talentId: string) {
+    await this.client
+      .deleteFrom('TalentWorkExperience')
+      .where('id', '=', id)
+      .where('talentId', '=', talentId)
+      .executeTakeFirst();
   }
 }

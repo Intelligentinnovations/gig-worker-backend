@@ -2,9 +2,9 @@ import { KyselyService } from '@backend-template/database';
 import { Optional } from '@backend-template/helpers';
 import { Injectable } from '@nestjs/common';
 import { Insertable, Selectable } from 'kysely';
+import { DateTime } from 'luxon';
 
 import { DB, Talent } from '../utils/types';
-import { DateTime } from 'luxon';
 
 @Injectable()
 export class TalentRepo {

@@ -83,7 +83,7 @@ export type TalentJobPreference = {
   workMode: WorkMode[];
   jobType: JobType[];
   location: string;
-  expectedSalary: string;
+  expectedSalary: number;
   talentId: string;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;

@@ -1,21 +1,22 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
 import { CustomRes } from '@backend-template/http';
 import {
   Authenticated,
   AuthenticatedGuard,
 } from '@backend-template/rest-server';
 import { UserData } from '@backend-template/types';
+import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
+
 import { RecruiterService } from './recruiter.service';
 import { RecruiterProfileDto } from './recruiter-profile.dto';
-import { ApiBearerAuth } from '@nestjs/swagger';
 
 @Controller('recruiter')
 @UseGuards(AuthenticatedGuard)
+@ApiBearerAuth('access-token')
 export class RecruiterController {
   constructor(private recruiterService: RecruiterService) {}
 
   @Post()
-  @ApiBearerAuth('access-token')
   async addRecruiter(
     @Authenticated() user: UserData,
     @Body() data: RecruiterProfileDto

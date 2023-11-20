@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { UserRepo } from './user.repo';
-import { Insertable, Selectable } from 'kysely';
-import { User } from '../utils/types';
 import { CustomRes } from '@backend-template/http';
+import { Injectable } from '@nestjs/common';
+import { Insertable, Selectable } from 'kysely';
+
+import { User } from '../utils/types';
+import { UserRepo } from './user.repo';
 
 @Injectable()
 export class UserService {
@@ -11,14 +12,28 @@ export class UserService {
   async create(data: Insertable<User>) {
     const existingUser = await this.userRepo.findByEmail(data.email).elseNull();
 
-    if (existingUser) {
-      throw CustomRes.badRequest('account with email already exist');
+    if (!existingUser) {
+      const user = await this.userRepo.create(data).elseThrow();
+      // todo emit profile created
+      return user.id;
     }
 
-    const user = await this.userRepo.create(data).elseThrow();
-    // todo emit created profile to auth service
+    for (const role of existingUser.roles) {
+      if (data.roles.includes(role)) {
+        await this.userRepo
+          .update({
+            id: existingUser.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            profileImage: data.profileImage ?? existingUser.profileImage,
+          })
+          .elseThrow();
 
-    return user.id;
+        return existingUser.id;
+      }
+    }
+
+    throw CustomRes.badRequest('user with email already exist');
   }
 
   async update(data: Omit<Selectable<User>, 'email' | 'roles'>) {

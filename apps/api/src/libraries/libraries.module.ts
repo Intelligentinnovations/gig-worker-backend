@@ -1,9 +1,9 @@
 import { KyselyService } from '@backend-template/database';
+import { CognitoService } from '@backend-template/http';
 import { Global, Module } from '@nestjs/common';
 
 import { SecretsModule } from '../secrets/secrets.module';
 import { SecretsService } from '../secrets/secrets.service';
-import { CognitoService } from '@backend-template/http';
 
 @Global()
 @Module({

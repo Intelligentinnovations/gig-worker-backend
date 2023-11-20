@@ -79,7 +79,7 @@ model TalentJobPreference {
   workMode        WorkMode[]
   jobType         JobType[]
   location        String
-  expectedSalary  BigInt
+  expectedSalary  Int
   talentId        BigInt
 
   createdAt DateTime @default(now())

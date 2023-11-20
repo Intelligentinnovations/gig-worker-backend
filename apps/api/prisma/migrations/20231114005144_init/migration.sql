@@ -76,7 +76,7 @@ CREATE TABLE "TalentJobPreference" (
     "workMode" "WorkMode"[],
     "jobType" "JobType"[],
     "location" TEXT NOT NULL,
-    "expectedSalary" BIGINT NOT NULL,
+    "expectedSalary" INTEGER NOT NULL,
     "talentId" BIGINT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,

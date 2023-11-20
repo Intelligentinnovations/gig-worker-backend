@@ -5,11 +5,11 @@ import {
   AwsTransporter,
 } from '@backend-template/microservice';
 import awsLambdaFastify, { CallbackHandler } from '@fastify/aws-lambda';
+import { SwaggerModule } from '@nestjs/swagger';
 import { APIGatewayProxyEvent, Handler, SNSEvent, SQSEvent } from 'aws-lambda';
 import { firstValueFrom, ReplaySubject } from 'rxjs';
 
 import { AppModule } from './app/app.module';
-import { SwaggerModule } from '@nestjs/swagger';
 import { baseRoute, docsConfig } from './config';
 
 const serverSubject = new ReplaySubject<CallbackHandler>();

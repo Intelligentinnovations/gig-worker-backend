@@ -1,8 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { KyselyService } from '@backend-template/database';
-import { DB, User } from '../utils/types';
-import { Insertable, Selectable } from 'kysely';
 import { Optional } from '@backend-template/helpers';
+import { Injectable } from '@nestjs/common';
+import { Insertable, Selectable } from 'kysely';
+
+import { DB, User } from '../utils/types';
 
 @Injectable()
 export class UserRepo {
@@ -13,7 +14,7 @@ export class UserRepo {
       this.client
         .insertInto('User')
         .values(data)
-        .returningAll()
+        .returning('id')
         .executeTakeFirst()
     );
   }
@@ -34,6 +35,7 @@ export class UserRepo {
       this.client
         .selectFrom('User')
         .where('email', '=', email)
+        .select(['id', 'roles', 'profileImage'])
         .executeTakeFirst()
     );
   }

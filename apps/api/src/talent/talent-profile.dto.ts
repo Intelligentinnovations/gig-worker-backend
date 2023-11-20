@@ -1,13 +1,12 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsAlpha,
-  IsAlphanumeric,
   IsArray,
-  IsInt,
   IsString,
+  IsTimeZone,
   IsUrl,
   ValidateIf,
 } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
 
 export class TalentProfileDto {
   @IsAlpha()
@@ -23,23 +22,20 @@ export class TalentProfileDto {
   @ValidateIf((object, value) => value !== null)
   profileImage!: string | null;
 
-  @IsAlphanumeric()
+  @IsString()
   @ApiProperty()
   bio!: string;
 
-  @IsAlphanumeric()
+  @IsString()
   @ApiProperty()
   location!: string;
-
-  @IsInt()
-  @ApiProperty()
-  yearsOfExperience!: number;
 
   @IsArray()
   @IsString({ each: true })
   @ApiProperty()
   skills!: Array<string>;
 
+  @IsTimeZone()
   @ApiProperty()
   timezone!: string;
 }
